@@ -8,8 +8,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/role-play-dev/backend/gateway/internal/config"
-	"github.com/role-play-dev/backend/gateway/internal/server"
+	"role-play-dev/backend/gateway/internal/config"
+	"role-play-dev/backend/gateway/internal/server"
 )
 
 func main() {

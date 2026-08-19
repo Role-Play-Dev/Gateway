@@ -1,4 +1,4 @@
-module github.com/role-play-dev/backend/gateway
+module role-play-dev/backend/gateway
 
 go 1.26.5
 

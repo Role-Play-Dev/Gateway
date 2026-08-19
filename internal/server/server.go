@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/role-play-dev/backend/gateway/internal/config"
+	"role-play-dev/backend/gateway/internal/config"
 )
 
 type Server interface {
