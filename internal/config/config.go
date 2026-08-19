@@ -9,21 +9,21 @@ import (
 )
 
 type Config struct {
-	Debug         bool
+	Release       bool
 	ServerAddress string
 }
 
 func NewConfig() Config {
-	debug := getBoolean("DEBUG", true)
+	release := getBoolean("RELEASE", false)
 
-	if debug {
+	if !release {
 		if err := godotenv.Load(); err != nil {
 			log.Println(err.Error())
 		}
 	}
 
 	return Config{
-		Debug:         debug,
+		Release:       release,
 		ServerAddress: getString("SERVER_ADDR", ":8080"),
 	}
 }
