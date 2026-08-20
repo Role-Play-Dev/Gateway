@@ -8,10 +8,21 @@ import (
 	"syscall"
 	"time"
 
+	_ "role-play-dev/backend/gateway/docs"
 	"role-play-dev/backend/gateway/internal/config"
 	"role-play-dev/backend/gateway/internal/server"
 )
 
+//	@title			Role-Play-Dev Gateway service API
+//	@version		1.0
+//	@description	Backend Gateway service API of a tabletop RPG helper
+//	@termsOfService	http://swagger.io/terms/
+
+//	@host		localhost:8080
+//	@BasePath	/v1
+
+// @externalDocs.description	OpenAPI
+// @externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
 	conf := config.NewConfig()
 	serv := server.NewServer(conf)

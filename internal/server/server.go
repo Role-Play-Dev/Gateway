@@ -5,12 +5,15 @@ import (
 	"log"
 	"net/http"
 
+	_ "role-play-dev/backend/gateway/docs"
 	"role-play-dev/backend/gateway/internal/config"
 	"role-play-dev/backend/gateway/internal/handler/auth"
 	"role-play-dev/backend/gateway/internal/handler/user"
 	"role-play-dev/backend/gateway/internal/middleware"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Server interface {
@@ -25,33 +28,34 @@ type server struct {
 func NewServer(conf config.Config) Server {
 	r := newRouter(conf)
 
-	{ // V1 group
-		v1 := r.Group("/v1")
+	{
+		api := r.Group("/api/v1")
 
-		{ // Auth group
+		{
 			s := auth.NewService()
+			rg := api.Group("/auth")
 
-			rg := v1.Group("/auth")
-
-			rg.GET("/login", auth.Login(s))
 			rg.POST("/register", auth.Register(s))
+			rg.POST("/login", auth.Login(s))
 			rg.GET("/refresh", auth.Refresh(s))
 			rg.GET("/logout", auth.Logout(s))
 		}
 
-		{ // API group
-			api := v1.Group("/api")
+		{
 			api.Use(middleware.Auth())
 
 			{
-				s := user.NewService()
+				{ // User
+					s := user.NewService()
+					rg := api.Group("/user")
 
-				rg := api.Group("/user")
-
-				rg.GET("/", user.Get(s))
+					rg.GET("/", user.Get(s))
+				}
 			}
 		}
 	}
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	return &server{
 		serv: &http.Server{

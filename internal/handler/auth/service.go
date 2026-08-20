@@ -16,15 +16,15 @@ func NewService() Service {
 	return &service{}
 }
 
+func (s *service) register(ctx context.Context) error {
+	return nil
+}
+
 func (s *service) login(ctx context.Context) error {
 	return nil
 }
 
 func (s *service) logout(ctx context.Context) error {
-	return nil
-}
-
-func (s *service) register(ctx context.Context) error {
 	return nil
 }
 
