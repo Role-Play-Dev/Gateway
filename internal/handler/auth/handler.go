@@ -22,7 +22,7 @@ import (
 func Register(s Service) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var reqBody RegisterRequest
-		if err := ctx.ShouldBind(&reqBody); err != nil {
+		if err := ctx.ShouldBindJSON(&reqBody); err != nil {
 			httputil.Error(ctx, http.StatusBadRequest, err)
 		}
 
@@ -49,7 +49,7 @@ func Register(s Service) gin.HandlerFunc {
 func Verify(s Service) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var reqBody VerifyRequest
-		if err := ctx.ShouldBind(&reqBody); err != nil {
+		if err := ctx.ShouldBindJSON(&reqBody); err != nil {
 			httputil.Error(ctx, http.StatusBadRequest, err)
 		}
 
