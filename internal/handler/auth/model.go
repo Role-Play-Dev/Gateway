@@ -11,10 +11,14 @@ type VerifyRequest struct {
 }
 
 type LoginRequest struct {
-	Identifier string `json:"identifier" validate:"required" example:"test@mail.ru"`
-	Password   string `json:"password" validate:"required" example:"Test_1234"`
+	Username string `json:"username" validate:"required" example:"test@mail.ru or test"`
+	Password string `json:"password" validate:"required" example:"Test_1234"`
 }
 
 type LoginResponce struct {
+	AccessToken string `json:"accessToken" example:"gG3d83bJk5jawy31...WE4u"`
+}
+
+type RefreshResponce struct {
 	AccessToken string `json:"accessToken" example:"gG3d83bJk5jawy31...WE4u"`
 }

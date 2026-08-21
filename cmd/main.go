@@ -13,13 +13,18 @@ import (
 	"role-play-dev/backend/gateway/internal/server"
 )
 
+//go:generate go install github.com/swaggo/swag/cmd/swag@latest
+
+//go:generate swag fmt
+//go:generate swag init -d ./,../ -o ../docs
+
 //	@title			Role-Play-Dev Gateway service API
 //	@version		1.0
 //	@description	Backend Gateway service API of a tabletop RPG helper
 //	@termsOfService	http://swagger.io/terms/
 
 //	@host		localhost:8080
-//	@BasePath	/v1
+//	@BasePath	/api/v1
 
 // @externalDocs.description	OpenAPI
 // @externalDocs.url			https://swagger.io/resources/open-api/

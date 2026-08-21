@@ -1,0 +1,207 @@
+basePath: /api/v1
+definitions:
+  auth.LoginRequest:
+    properties:
+      password:
+        example: Test_1234
+        type: string
+      username:
+        example: test@mail.ru or test
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  auth.LoginResponce:
+    properties:
+      accessToken:
+        example: gG3d83bJk5jawy31...WE4u
+        type: string
+    type: object
+  auth.RefreshResponce:
+    properties:
+      accessToken:
+        example: gG3d83bJk5jawy31...WE4u
+        type: string
+    type: object
+  auth.RegisterRequest:
+    properties:
+      email:
+        example: test@mail.ru
+        type: string
+    required:
+    - email
+    type: object
+  auth.VerifyRequest:
+    properties:
+      password:
+        example: Test_1234
+        type: string
+      token:
+        example: a17a89b6-eff8-4b05-9be7-407d62b46c4a
+        type: string
+      username:
+        example: test
+        type: string
+    required:
+    - password
+    - token
+    - username
+    type: object
+  httputil.emptyResponce:
+    properties:
+      code:
+        type: integer
+    type: object
+  httputil.errorResponce:
+    properties:
+      code:
+        type: integer
+      message:
+        example: error description
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact: {}
+  description: Backend Gateway service API of a tabletop RPG helper
+  termsOfService: http://swagger.io/terms/
+  title: Role-Play-Dev Gateway service API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Returns access token in body and sets refresh token to cookie
+      parameters:
+      - description: Login request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.LoginResponce'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.errorResponce'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.errorResponce'
+      summary: Login by email and password
+      tags:
+      - auth
+  /auth/logout:
+    get:
+      consumes:
+      - application/json
+      description: Clears refresh token from cookie
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httputil.emptyResponce'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.errorResponce'
+      summary: Logout from account
+      tags:
+      - auth
+  /auth/refresh:
+    get:
+      consumes:
+      - application/json
+      description: Refreshs access token using refresh token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.RefreshResponce'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.errorResponce'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.errorResponce'
+      summary: Refresh access token
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Send verification link to provided email address
+      parameters:
+      - description: Register email request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.RegisterRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.errorResponce'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.errorResponce'
+      summary: Register email to send verification link
+      tags:
+      - auth
+  /auth/verify:
+    post:
+      consumes:
+      - application/json
+      description: Checks if provided token equals to stored one and saves user data
+      parameters:
+      - description: Verify request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.VerifyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httputil.emptyResponce'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.errorResponce'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.errorResponce'
+      summary: Verifies email by token and applies user data
+      tags:
+      - auth
+swagger: "2.0"

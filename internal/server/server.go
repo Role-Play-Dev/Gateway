@@ -36,6 +36,7 @@ func NewServer(conf config.Config) Server {
 			rg := api.Group("/auth")
 
 			rg.POST("/register", auth.Register(s))
+			rg.POST("/verify", auth.Verify(s))
 			rg.POST("/login", auth.Login(s))
 			rg.GET("/refresh", auth.Refresh(s))
 			rg.GET("/logout", auth.Logout(s))
