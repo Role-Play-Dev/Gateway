@@ -2,10 +2,23 @@ package auth
 
 import (
 	"net/http"
+	"role-play-dev/backend/gateway/internal/config"
 	"role-play-dev/backend/gateway/internal/util/httputil"
 
 	"github.com/gin-gonic/gin"
 )
+
+type handler struct {
+	serv Service
+	conf config.Config
+}
+
+func NewHandler(serv Service, conf config.Config) *handler {
+	return &handler{
+		serv: serv,
+		conf: conf,
+	}
+}
 
 // Register godoc
 //
@@ -19,14 +32,14 @@ import (
 //	@Success		200		{object}	RegisterRequest
 //	@Failure		400		{object}	httputil.errorResponce
 //	@Failure		500		{object}	httputil.errorResponce
-func Register(s Service) gin.HandlerFunc {
+func (h *handler) Register() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var reqBody RegisterRequest
 		if err := ctx.ShouldBindJSON(&reqBody); err != nil {
 			httputil.Error(ctx, http.StatusBadRequest, err)
 		}
 
-		if err := s.register(ctx, reqBody.Email); err != nil {
+		if err := h.serv.register(ctx, reqBody.Email); err != nil {
 			httputil.Error(ctx, http.StatusInternalServerError, err)
 		}
 
@@ -46,14 +59,14 @@ func Register(s Service) gin.HandlerFunc {
 //	@Success		200		{object}	httputil.emptyResponce
 //	@Failure		400		{object}	httputil.errorResponce
 //	@Failure		500		{object}	httputil.errorResponce
-func Verify(s Service) gin.HandlerFunc {
+func (h *handler) Verify() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var reqBody VerifyRequest
 		if err := ctx.ShouldBindJSON(&reqBody); err != nil {
 			httputil.Error(ctx, http.StatusBadRequest, err)
 		}
 
-		if err := s.verify(ctx, reqBody.Token, reqBody.Username, reqBody.Password); err != nil {
+		if err := h.serv.verify(ctx, reqBody.Token, reqBody.Username, reqBody.Password); err != nil {
 			httputil.Error(ctx, http.StatusInternalServerError, err)
 		}
 
@@ -73,19 +86,28 @@ func Verify(s Service) gin.HandlerFunc {
 //	@Success		200		{object}	LoginResponce
 //	@Failure		400		{object}	httputil.errorResponce
 //	@Failure		500		{object}	httputil.errorResponce
-func Login(s Service) gin.HandlerFunc {
+func (h *handler) Login() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var reqBody LoginRequest
 		if err := ctx.ShouldBindJSON(&reqBody); err != nil {
 			httputil.Error(ctx, http.StatusBadRequest, err)
 		}
 
-		accToken, refToken, err := s.login(ctx, reqBody.Username, reqBody.Password)
+		accToken, refToken, err := h.serv.login(ctx, reqBody.Username, reqBody.Password)
 		if err != nil {
 			httputil.Error(ctx, http.StatusInternalServerError, err)
 		}
 
-		ctx.SetCookie("refresh_token", refToken, 1000, "", "localhost", false, true)
+		ctx.SetCookie(
+			h.conf.Token.Cookie.Name,
+			refToken,
+			h.conf.Token.Cookie.MaxAge,
+			h.conf.Token.Cookie.Path,
+			h.conf.ClientAddress,
+			h.conf.Token.Cookie.Secure,
+			h.conf.Token.Cookie.HttpOnly,
+		)
+
 		httputil.JSON(ctx, http.StatusOK, LoginResponce{
 			AccessToken: accToken,
 		})
@@ -102,13 +124,22 @@ func Login(s Service) gin.HandlerFunc {
 //	@Router			/auth/logout [get]
 //	@Success		200	{object}	httputil.emptyResponce
 //	@Failure		500	{object}	httputil.errorResponce
-func Logout(s Service) gin.HandlerFunc {
+func (h *handler) Logout() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if err := s.logout(ctx); err != nil {
+		if err := h.serv.logout(ctx); err != nil {
 			httputil.Error(ctx, http.StatusInternalServerError, err)
 		}
 
-		ctx.SetCookie("refresh_token", "", 0, "", "localhost", false, true)
+		ctx.SetCookie(
+			h.conf.Token.Cookie.Name,
+			"",
+			h.conf.Token.Cookie.MaxAge,
+			h.conf.Token.Cookie.Path,
+			h.conf.ClientAddress,
+			h.conf.Token.Cookie.Secure,
+			h.conf.Token.Cookie.HttpOnly,
+		)
+
 		httputil.Empty(ctx, http.StatusOK)
 	}
 }
@@ -124,14 +155,14 @@ func Logout(s Service) gin.HandlerFunc {
 //	@Success		200	{object}	RefreshResponce
 //	@Failure		400	{object}	httputil.errorResponce
 //	@Failure		500	{object}	httputil.errorResponce
-func Refresh(s Service) gin.HandlerFunc {
+func (h *handler) Refresh() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		refToken, err := ctx.Cookie("refresh_token")
 		if err != nil {
 			httputil.Error(ctx, http.StatusBadRequest, err)
 		}
 
-		accToken, err := s.refresh(ctx, refToken)
+		accToken, err := h.serv.refresh(ctx, refToken)
 		if err != nil {
 			httputil.Error(ctx, http.StatusInternalServerError, err)
 		}

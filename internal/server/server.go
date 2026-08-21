@@ -8,8 +8,6 @@ import (
 	_ "role-play-dev/backend/gateway/docs"
 	"role-play-dev/backend/gateway/internal/config"
 	"role-play-dev/backend/gateway/internal/handler/auth"
-	"role-play-dev/backend/gateway/internal/handler/user"
-	"role-play-dev/backend/gateway/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -33,27 +31,17 @@ func NewServer(conf config.Config) Server {
 
 		{
 			s := auth.NewService()
+			h := auth.NewHandler(s, conf)
+
 			rg := api.Group("/auth")
-
-			rg.POST("/register", auth.Register(s))
-			rg.POST("/verify", auth.Verify(s))
-			rg.POST("/login", auth.Login(s))
-			rg.GET("/refresh", auth.Refresh(s))
-			rg.GET("/logout", auth.Logout(s))
+			rg.POST("/register", h.Register())
+			rg.POST("/verify", h.Verify())
+			rg.POST("/login", h.Login())
+			rg.GET("/refresh", h.Refresh())
+			rg.GET("/logout", h.Logout())
 		}
 
-		{
-			api.Use(middleware.Auth())
-
-			{
-				{ // User
-					s := user.NewService()
-					rg := api.Group("/user")
-
-					rg.GET("/", user.Get(s))
-				}
-			}
-		}
+		// api.Use(middleware.Auth())
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
