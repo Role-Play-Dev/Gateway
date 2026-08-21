@@ -7,5 +7,10 @@ if git diff --cached --name-only | grep -E "internal/handler/[^/]+/handler\.go$"
     git add docs/
 fi
 
+if git diff --cached --name-only | grep -E "docs/[^/]+$" | grep -q .; then
+    echo "Docs can not be modified directly"
+    exit 1
+fi
+
 # Выход с кодом 0, если всё хорошо, с кодом 1 — чтобы прервать коммит
 exit 0
