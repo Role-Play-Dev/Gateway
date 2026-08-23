@@ -37,16 +37,6 @@ jobs:
       if: steps.changes.outputs.src == 'true'
       run: go generate ./...
 
-    - name: Check for docs changes
-      if: steps.changes.outputs.src == 'true'
-      id: check-docs
-      run: |
-        if git status --porcelain | awk '{print $2}' | grep -q "^docs/"; then
-          echo "docs_changed=true" >> $GITHUB_OUTPUT
-        else
-          echo "docs_changed=false" >> $GITHUB_OUTPUT
-        fi
-
     - name: Commit generated docs
       if: steps.changes.outputs.src == 'true'
       uses: stefanzweifel/git-auto-commit-action@v5
