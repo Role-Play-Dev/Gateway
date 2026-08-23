@@ -15,24 +15,51 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Check for handler changes
+      id: check-handlers
+      run: |
+        # Для push используем сравнение с предыдущим коммитом
+        # Для pull_request используем сравнение с базовой веткой
+
+        if [[ "${{ github.event_name }}" == "push" ]]; then
+          BASE_SHA="${{ github.event.before }}"
+          HEAD_SHA="${{ github.sha }}"
+        elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+        else
+          # fallback: сравниваем с HEAD^ (последний коммит)
+          BASE_SHA="HEAD^"
+          HEAD_SHA="HEAD"
+        fi
+
+        # Получаем список изменённых файлов между BASE_SHA и HEAD_SHA,
+        # фильтруем только те, что попадают под маску internal/handler/**/handler.go
+
+        changed_files=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" | grep -E '^internal/handler/[^/]+/handler\.go$' || true)
+
+        if [[ -n "$changed_files" ]]; then
+          echo "handler_changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "handler_changed=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
         go-version: '1.26.5'
 
     - name: Generate swagger docs
-      if: git diff --cached --name-only | grep -E "internal/handler/[^/]+/handler\.go$" | grep -q .
-      run: | 
-        go generate ./...
+      if: steps.check-handlers.outputs.handler_changed == 'true'
+      run: go generate ./...
 
-    - name: Check for changes
-      id: git-check
+    - name: Check for docs changes
+      id: check-docs
       run: |
-        git status --porcelain
-        if [[ -z $(git status --porcelain) ]]; then
-          echo "changes=false" >> $GITHUB_OUTPUT
+        if git status --porcelain | awk '{print $2}' | grep -q "^docs/"; then
+          echo "docs_changed=true" >> $GITHUB_OUTPUT
         else
-          echo "changes=true" >> $GITHUB_OUTPUT
+          echo "docs_changed=false" >> $GITHUB_OUTPUT
         fi
 
     - name: Build
@@ -41,11 +68,10 @@ jobs:
     - name: Test
       run: go test -v ./...
 
-    - name: Commit and push changes
-      if: steps.git-check.outputs.changes == 'true' && git diff --cached --name-only | grep -E "docs/[^/]+$" | grep -q .
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git add .
-        git commit -m "Automated code generation [skip ci]"
-        git push
+    - name: Commit generated docs
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "chore: update swagger docs [skip ci]"
+        file_pattern: "docs/*"
+        commit_user_name: "github-actions[bot]"
+        commit_user_email: "github-actions[bot]@users.noreply.github.com"
