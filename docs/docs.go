@@ -128,7 +128,7 @@ const docTemplate = `{
         },
         "/auth/register": {
             "post": {
-                "description": "Send verification link to provided email address",
+                "description": "Send verification link with code in query to provided email address",
                 "consumes": [
                     "application/json"
                 ],
