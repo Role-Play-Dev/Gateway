@@ -10,8 +10,12 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  generate_&_build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
     steps:
     - uses: actions/checkout@v4
 
