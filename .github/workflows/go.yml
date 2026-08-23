@@ -10,7 +10,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  generate_&_build:
+  generate_build:
     runs-on: ubuntu-latest
 
     permissions:
