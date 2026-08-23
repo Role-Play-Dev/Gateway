@@ -23,7 +23,7 @@ func NewHandler(serv Service, conf config.Config) *handler {
 // Register godoc
 //
 //	@Summary		Register email to send verification link
-//	@Description	Sends verification link with code in query to provided email address
+//	@Description	Send verification link with code in query to provided email address
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
