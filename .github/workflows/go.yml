@@ -20,11 +20,10 @@ jobs:
       with:
         go-version: '1.26.5'
 
-    - name: Generate
+    - name: Generate swagger docs
+      if: git diff --cached --name-only | grep -E "internal/handler/[^/]+/handler\.go$" | grep -q .
       run: | 
-        if git diff --cached --name-only | grep -E "internal/handler/[^/]+/handler\.go$" | grep -q .; then
-            go generate ./...
-        fi
+        go generate ./...
 
     - name: Check for changes
       id: git-check
@@ -43,7 +42,7 @@ jobs:
       run: go test -v ./...
 
     - name: Commit and push changes
-      if: steps.git-check.outputs.changes == 'true'
+      if: steps.git-check.outputs.changes == 'true' && git diff --cached --name-only | grep -E "docs/[^/]+$" | grep -q .
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
