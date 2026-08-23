@@ -1,12 +1,5 @@
 # Gateway
 
-## Setup
-
-1. **pre-commit hook**
-    ```cmd
-    git config core.hooksPath .githooks
-    ```
-
 ## Tools
 
 1.  **swaggo** - Swagger and OpenAPI documentation generator
