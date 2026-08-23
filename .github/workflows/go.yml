@@ -10,7 +10,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  generate_build:
+  generate_swagger_docs:
     runs-on: ubuntu-latest
 
     permissions:
@@ -21,22 +21,24 @@ jobs:
 
     - name: Check for handler changes
       uses: dorny/paths-filter@v4
-      id: handler-changes
+      id: changes
       with:
         filters: |
           src:
             - 'internal/handler/**/handler.go'
 
     - name: Set up Go
+      if: steps.changes.outputs.src == 'true'
       uses: actions/setup-go@v4
       with:
         go-version: '1.26.5'
 
     - name: Generate swagger docs
-      if: steps.handler-changes.outputs.src == 'true'
+      if: steps.changes.outputs.src == 'true'
       run: go generate ./...
 
     - name: Check for docs changes
+      if: steps.changes.outputs.src == 'true'
       id: check-docs
       run: |
         if git status --porcelain | awk '{print $2}' | grep -q "^docs/"; then
@@ -45,16 +47,29 @@ jobs:
           echo "docs_changed=false" >> $GITHUB_OUTPUT
         fi
 
-    - name: Build
-      run: go build -v ./...
-
-    - name: Test
-      run: go test -v ./...
-
     - name: Commit generated docs
+      if: steps.changes.outputs.src == 'true'
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
         commit_message: "chore: update swagger docs [skip ci]"
         file_pattern: "docs/*"
         commit_user_name: "github-actions[bot]"
         commit_user_email: "github-actions[bot]@users.noreply.github.com"
+    
+
+  build_test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.26.5'
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Test
+      run: go test -v ./...
