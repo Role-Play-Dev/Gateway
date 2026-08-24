@@ -6,7 +6,7 @@ definitions:
         example: Test_1234
         type: string
       username:
-        example: test@mail.ru or test
+        example: test@mail.ru / test
         type: string
     required:
     - password
@@ -26,14 +26,6 @@ definitions:
     type: object
   auth.RegisterRequest:
     properties:
-      email:
-        example: test@mail.ru
-        type: string
-    required:
-    - email
-    type: object
-  auth.VerifyRequest:
-    properties:
       password:
         example: Test_1234
         type: string
@@ -47,6 +39,14 @@ definitions:
     - password
     - token
     - username
+    type: object
+  auth.SendLinkRequest:
+    properties:
+      email:
+        example: test@mail.ru
+        type: string
+    required:
+    - email
     type: object
   httputil.emptyResponce:
     properties:
@@ -148,44 +148,14 @@ paths:
     post:
       consumes:
       - application/json
-      description: Sends verification link with code in query to provided email address
+      description: Verifies token from link and register user
       parameters:
-      - description: Register email request
+      - description: Register request
         in: body
         name: request
         required: true
         schema:
           $ref: '#/definitions/auth.RegisterRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/auth.RegisterRequest'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/httputil.errorResponce'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/httputil.errorResponce'
-      summary: Register email to send verification link
-      tags:
-      - auth
-  /auth/verify:
-    post:
-      consumes:
-      - application/json
-      description: Checks if provided token equals to stored one and saves user data
-      parameters:
-      - description: Verify request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/auth.VerifyRequest'
       produces:
       - application/json
       responses:
@@ -201,7 +171,37 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.errorResponce'
-      summary: Verifies email by token and applies user data
+      summary: Verify email and register user
+      tags:
+      - auth
+  /auth/sendLink:
+    post:
+      consumes:
+      - application/json
+      description: Sends registration link with token in query to provided email address
+      parameters:
+      - description: Send link request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.SendLinkRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httputil.emptyResponce'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.errorResponce'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.errorResponce'
+      summary: Sends registration link to email
       tags:
       - auth
 swagger: "2.0"

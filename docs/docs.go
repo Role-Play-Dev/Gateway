@@ -128,7 +128,7 @@ const docTemplate = `{
         },
         "/auth/register": {
             "post": {
-                "description": "Sends verification link with code in query to provided email address",
+                "description": "Verifies token from link and register user",
                 "consumes": [
                     "application/json"
                 ],
@@ -138,10 +138,10 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Register email to send verification link",
+                "summary": "Verify email and register user",
                 "parameters": [
                     {
-                        "description": "Register email request",
+                        "description": "Register request",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -154,7 +154,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/auth.RegisterRequest"
+                            "$ref": "#/definitions/httputil.emptyResponce"
                         }
                     },
                     "400": {
@@ -172,9 +172,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/verify": {
+        "/auth/sendLink": {
             "post": {
-                "description": "Checks if provided token equals to stored one and saves user data",
+                "description": "Sends registration link with token in query to provided email address",
                 "consumes": [
                     "application/json"
                 ],
@@ -184,15 +184,15 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Verifies email by token and applies user data",
+                "summary": "Sends registration link to email",
                 "parameters": [
                     {
-                        "description": "Verify request",
+                        "description": "Send link request",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/auth.VerifyRequest"
+                            "$ref": "#/definitions/auth.SendLinkRequest"
                         }
                     }
                 ],
@@ -233,7 +233,7 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string",
-                    "example": "test@mail.ru or test"
+                    "example": "test@mail.ru / test"
                 }
             }
         },
@@ -258,18 +258,6 @@ const docTemplate = `{
         "auth.RegisterRequest": {
             "type": "object",
             "required": [
-                "email"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "test@mail.ru"
-                }
-            }
-        },
-        "auth.VerifyRequest": {
-            "type": "object",
-            "required": [
                 "password",
                 "token",
                 "username"
@@ -286,6 +274,18 @@ const docTemplate = `{
                 "username": {
                     "type": "string",
                     "example": "test"
+                }
+            }
+        },
+        "auth.SendLinkRequest": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "test@mail.ru"
                 }
             }
         },
