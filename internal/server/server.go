@@ -34,8 +34,8 @@ func NewServer(conf config.Config) Server {
 			h := auth.NewHandler(s, conf)
 
 			rg := api.Group("/auth")
+			rg.POST("/sendLink", h.SendLink())
 			rg.POST("/register", h.Register())
-			rg.POST("/verify", h.Verify())
 			rg.POST("/login", h.Login())
 			rg.GET("/refresh", h.Refresh())
 			rg.GET("/logout", h.Logout())

@@ -20,21 +20,21 @@ func NewHandler(serv Service, conf config.Config) *handler {
 	}
 }
 
-// Register godoc
+// SendLink godoc
 //
-//	@Summary		Register email to send verification link
-//	@Description	Sends verification link with code in query to provided email address
+//	@Summary		Sends registration link to email
+//	@Description	Sends registration link with token in query to provided email address
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Router			/auth/register [post]
-//	@Param			request	body		RegisterRequest	true	"Register email request"
-//	@Success		200		{object}	RegisterRequest
+//	@Router			/auth/sendLink [post]
+//	@Param			request	body		SendLinkRequest	true	"Send link request"
+//	@Success		200		{object}	httputil.emptyResponce
 //	@Failure		400		{object}	httputil.errorResponce
 //	@Failure		500		{object}	httputil.errorResponce
-func (h *handler) Register() gin.HandlerFunc {
+func (h *handler) SendLink() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var reqBody RegisterRequest
+		var reqBody SendLinkRequest
 		if err := ctx.ShouldBindJSON(&reqBody); err != nil {
 			httputil.Error(ctx, http.StatusBadRequest, err)
 		}
@@ -47,21 +47,21 @@ func (h *handler) Register() gin.HandlerFunc {
 	}
 }
 
-// Verify godoc
+// Register godoc
 //
-//	@Summary		Verifies email by token and applies user data
-//	@Description	Checks if provided token equals to stored one and saves user data
+//	@Summary		Verify email and register user
+//	@Description	Verifies token from link and register user
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Router			/auth/verify [post]
-//	@Param			request	body		VerifyRequest	true	"Verify request"
+//	@Router			/auth/register [post]
+//	@Param			request	body		RegisterRequest	true	"Register request"
 //	@Success		200		{object}	httputil.emptyResponce
 //	@Failure		400		{object}	httputil.errorResponce
 //	@Failure		500		{object}	httputil.errorResponce
-func (h *handler) Verify() gin.HandlerFunc {
+func (h *handler) Register() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var reqBody VerifyRequest
+		var reqBody RegisterRequest
 		if err := ctx.ShouldBindJSON(&reqBody); err != nil {
 			httputil.Error(ctx, http.StatusBadRequest, err)
 		}

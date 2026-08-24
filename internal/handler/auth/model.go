@@ -1,17 +1,17 @@
 package auth
 
-type RegisterRequest struct {
+type SendLinkRequest struct {
 	Email string `json:"email" validate:"required" example:"test@mail.ru"`
 }
 
-type VerifyRequest struct {
+type RegisterRequest struct {
 	Token    string `json:"token" validate:"required" example:"a17a89b6-eff8-4b05-9be7-407d62b46c4a"`
 	Username string `json:"username" validate:"required" example:"test"`
 	Password string `json:"password" validate:"required" example:"Test_1234"`
 }
 
 type LoginRequest struct {
-	Username string `json:"username" validate:"required" example:"test@mail.ru or test"`
+	Username string `json:"username" validate:"required" example:"test@mail.ru / test"`
 	Password string `json:"password" validate:"required" example:"Test_1234"`
 }
 
