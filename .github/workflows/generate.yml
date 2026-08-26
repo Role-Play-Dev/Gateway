@@ -1,0 +1,35 @@
+name: Generate code
+
+on:
+  push:
+    branches: [ "main" ]
+  
+  generate_swagger_docs:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Check for handler changes
+      uses: dorny/paths-filter@v4
+      id: changes
+      with:
+        filters: |
+          src:
+            - 'internal/handler/**/handler.go'
+
+    - name: Generate swagger docs
+      if: steps.changes.outputs.src == 'true'
+      run: docker run --rm -v ${pwd}:/code ghcr.io/swaggo/swag:latest init -d ./cmd/,./ -o ./docs
+
+    - name: Commit generated docs
+      if: steps.changes.outputs.src == 'true'
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "chore: update swagger docs [skip ci]"
+        file_pattern: "docs/*"
+        commit_user_name: "github-actions[bot]"
+        commit_user_email: "github-actions[bot]@users.noreply.github.com"
