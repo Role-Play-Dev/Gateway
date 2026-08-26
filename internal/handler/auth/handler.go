@@ -76,7 +76,7 @@ func (h *handler) Register() gin.HandlerFunc {
 
 // Login godoc
 //
-//	@Summary		Login by email and password
+//	@Summary		Login into by email and password
 //	@Description	Returns access token in body and sets refresh token to cookie
 //	@Tags			auth
 //	@Accept			json
