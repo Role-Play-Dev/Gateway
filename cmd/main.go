@@ -13,7 +13,7 @@ import (
 	"role-play-dev/backend/gateway/internal/server"
 )
 
-//	@title			Role-Play-Dev Gateway service API
+//	@title			Role-Play-Dev Gateway service API documentation
 //	@version		1.0
 //	@description	Backend Gateway service API of a tabletop RPG helper
 //	@termsOfService	http://swagger.io/terms/
