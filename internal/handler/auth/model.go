@@ -5,7 +5,6 @@ type CredentialsRegisterLinkSendRequest struct {
 }
 
 type CredentialsRegisterLinkConfirmRequest struct {
-	Token          string `json:"token" validate:"required" example:"a17a89b6-eff8-4b05-9be7-407d62b46c4a"`
 	Username       string `json:"username" validate:"required" example:"test"`
 	Password       string `json:"password" validate:"required" example:"Test_1234"`
 	PasswordRepeat string `json:"passwordRepeat" validate:"required" example:"Test_1234"`
