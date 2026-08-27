@@ -69,7 +69,7 @@ info:
   contact: {}
   description: Backend Gateway service API of a tabletop RPG helper
   termsOfService: http://swagger.io/terms/
-  title: Role-Play-Dev Gateway service API
+  title: Role-Play-Dev Gateway service API documentation
   version: "1.0"
 paths:
   /auth/login:
@@ -99,7 +99,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.errorResponce'
-      summary: Login by email and password
+      summary: Login into by email and password
       tags:
       - auth
   /auth/logout:

@@ -28,7 +28,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Login by email and password",
+                "summary": "Login into by email and password",
                 "parameters": [
                     {
                         "description": "Login request",
@@ -322,7 +322,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "Role-Play-Dev Gateway service API",
+	Title:            "Role-Play-Dev Gateway service API documentation",
 	Description:      "Backend Gateway service API of a tabletop RPG helper",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
