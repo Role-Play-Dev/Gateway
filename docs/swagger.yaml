@@ -1,6 +1,6 @@
 basePath: /api/v1
 definitions:
-  auth.LoginRequest:
+  auth.CredentialsLoginRequest:
     properties:
       password:
         example: Test_1234
@@ -12,21 +12,12 @@ definitions:
     - password
     - username
     type: object
-  auth.LoginResponce:
-    properties:
-      accessToken:
-        example: gG3d83bJk5jawy31...WE4u
-        type: string
-    type: object
-  auth.RefreshResponce:
-    properties:
-      accessToken:
-        example: gG3d83bJk5jawy31...WE4u
-        type: string
-    type: object
-  auth.RegisterRequest:
+  auth.CredentialsRegisterLinkConfirmRequest:
     properties:
       password:
+        example: Test_1234
+        type: string
+      passwordRepeat:
         example: Test_1234
         type: string
       token:
@@ -37,16 +28,29 @@ definitions:
         type: string
     required:
     - password
+    - passwordRepeat
     - token
     - username
     type: object
-  auth.SendLinkRequest:
+  auth.CredentialsRegisterLinkSendRequest:
     properties:
       email:
         example: test@mail.ru
         type: string
     required:
     - email
+    type: object
+  auth.LoginResponce:
+    properties:
+      accessToken:
+        example: gG3d83bJk5jawy31...WE4u
+        type: string
+    type: object
+  auth.TokenRefreshResponce:
+    properties:
+      accessToken:
+        example: gG3d83bJk5jawy31...WE4u
+        type: string
     type: object
   httputil.emptyResponce:
     properties:
@@ -72,18 +76,18 @@ info:
   title: Role-Play-Dev Gateway service API documentation
   version: "1.0"
 paths:
-  /auth/login:
+  /auth/creds/login:
     post:
       consumes:
       - application/json
       description: Returns access token in body and sets refresh token to cookie
       parameters:
-      - description: Login request
+      - description: CredentialsLogin request
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/auth.LoginRequest'
+          $ref: '#/definitions/auth.CredentialsLoginRequest'
       produces:
       - application/json
       responses:
@@ -99,7 +103,67 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.errorResponce'
-      summary: Login into by email and password
+      summary: CredentialsLogin into by email and password
+      tags:
+      - auth
+  /auth/creds/reg/link/confirm:
+    post:
+      consumes:
+      - application/json
+      description: Verifies token from link and register user
+      parameters:
+      - description: CredentialsRegisterLinkConfirm request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.CredentialsRegisterLinkConfirmRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httputil.emptyResponce'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.errorResponce'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.errorResponce'
+      summary: Verify email and register user
+      tags:
+      - auth
+  /auth/creds/reg/link/send:
+    post:
+      consumes:
+      - application/json
+      description: Sends registration link with token in query to provided email address
+      parameters:
+      - description: Send link request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.CredentialsRegisterLinkSendRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httputil.emptyResponce'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.errorResponce'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.errorResponce'
+      summary: Sends registration link to email
       tags:
       - auth
   /auth/logout:
@@ -121,7 +185,7 @@ paths:
       summary: Logout from account
       tags:
       - auth
-  /auth/refresh:
+  /auth/token/refresh:
     get:
       consumes:
       - application/json
@@ -132,7 +196,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.RefreshResponce'
+            $ref: '#/definitions/auth.TokenRefreshResponce'
         "400":
           description: Bad Request
           schema:
@@ -141,67 +205,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.errorResponce'
-      summary: Refresh access token
-      tags:
-      - auth
-  /auth/register:
-    post:
-      consumes:
-      - application/json
-      description: Verifies token from link and register user
-      parameters:
-      - description: Register request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/auth.RegisterRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/httputil.emptyResponce'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/httputil.errorResponce'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/httputil.errorResponce'
-      summary: Verify email and register user
-      tags:
-      - auth
-  /auth/sendLink:
-    post:
-      consumes:
-      - application/json
-      description: Sends registration link with token in query to provided email address
-      parameters:
-      - description: Send link request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/auth.SendLinkRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/httputil.emptyResponce'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/httputil.errorResponce'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/httputil.errorResponce'
-      summary: Sends registration link to email
+      summary: TokenRefresh access token
       tags:
       - auth
 swagger: "2.0"

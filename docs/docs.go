@@ -16,7 +16,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/auth/login": {
+        "/auth/creds/login": {
             "post": {
                 "description": "Returns access token in body and sets refresh token to cookie",
                 "consumes": [
@@ -28,15 +28,15 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Login into by email and password",
+                "summary": "CredentialsLogin into by email and password",
                 "parameters": [
                     {
-                        "description": "Login request",
+                        "description": "CredentialsLogin request",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/auth.LoginRequest"
+                            "$ref": "#/definitions/auth.CredentialsLoginRequest"
                         }
                     }
                 ],
@@ -45,6 +45,98 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/auth.LoginResponce"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.errorResponce"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.errorResponce"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/creds/reg/link/confirm": {
+            "post": {
+                "description": "Verifies token from link and register user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Verify email and register user",
+                "parameters": [
+                    {
+                        "description": "CredentialsRegisterLinkConfirm request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.CredentialsRegisterLinkConfirmRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.emptyResponce"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.errorResponce"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.errorResponce"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/creds/reg/link/send": {
+            "post": {
+                "description": "Sends registration link with token in query to provided email address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Sends registration link to email",
+                "parameters": [
+                    {
+                        "description": "Send link request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.CredentialsRegisterLinkSendRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.emptyResponce"
                         }
                     },
                     "400": {
@@ -91,7 +183,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/refresh": {
+        "/auth/token/refresh": {
             "get": {
                 "description": "Refreshs access token using refresh token",
                 "consumes": [
@@ -103,104 +195,12 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Refresh access token",
+                "summary": "TokenRefresh access token",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/auth.RefreshResponce"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.errorResponce"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.errorResponce"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/register": {
-            "post": {
-                "description": "Verifies token from link and register user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Verify email and register user",
-                "parameters": [
-                    {
-                        "description": "Register request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/auth.RegisterRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.emptyResponce"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.errorResponce"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.errorResponce"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/sendLink": {
-            "post": {
-                "description": "Sends registration link with token in query to provided email address",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Sends registration link to email",
-                "parameters": [
-                    {
-                        "description": "Send link request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/auth.SendLinkRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.emptyResponce"
+                            "$ref": "#/definitions/auth.TokenRefreshResponce"
                         }
                     },
                     "400": {
@@ -220,7 +220,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "auth.LoginRequest": {
+        "auth.CredentialsLoginRequest": {
             "type": "object",
             "required": [
                 "password",
@@ -237,33 +237,20 @@ const docTemplate = `{
                 }
             }
         },
-        "auth.LoginResponce": {
-            "type": "object",
-            "properties": {
-                "accessToken": {
-                    "type": "string",
-                    "example": "gG3d83bJk5jawy31...WE4u"
-                }
-            }
-        },
-        "auth.RefreshResponce": {
-            "type": "object",
-            "properties": {
-                "accessToken": {
-                    "type": "string",
-                    "example": "gG3d83bJk5jawy31...WE4u"
-                }
-            }
-        },
-        "auth.RegisterRequest": {
+        "auth.CredentialsRegisterLinkConfirmRequest": {
             "type": "object",
             "required": [
                 "password",
+                "passwordRepeat",
                 "token",
                 "username"
             ],
             "properties": {
                 "password": {
+                    "type": "string",
+                    "example": "Test_1234"
+                },
+                "passwordRepeat": {
                     "type": "string",
                     "example": "Test_1234"
                 },
@@ -277,7 +264,7 @@ const docTemplate = `{
                 }
             }
         },
-        "auth.SendLinkRequest": {
+        "auth.CredentialsRegisterLinkSendRequest": {
             "type": "object",
             "required": [
                 "email"
@@ -286,6 +273,24 @@ const docTemplate = `{
                 "email": {
                     "type": "string",
                     "example": "test@mail.ru"
+                }
+            }
+        },
+        "auth.LoginResponce": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string",
+                    "example": "gG3d83bJk5jawy31...WE4u"
+                }
+            }
+        },
+        "auth.TokenRefreshResponce": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string",
+                    "example": "gG3d83bJk5jawy31...WE4u"
                 }
             }
         },
