@@ -1,11 +1,13 @@
-name: Generate code
+name: Build and Test
 
 on:
   push:
     branches: [ "main" ]
-  
+  pull_request:
+    branches: [ "main" ]
+
 jobs:
-  generate_swagger_docs:
+  generate:
     runs-on: ubuntu-latest
 
     permissions:
@@ -34,3 +36,21 @@ jobs:
         file_pattern: "docs/*"
         commit_user_name: "github-actions[bot]"
         commit_user_email: "github-actions[bot]@users.noreply.github.com"
+
+  build:
+    runs-on: ubuntu-latest
+    needs: generate
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.26.5'
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Test
+      run: go test -v ./...
