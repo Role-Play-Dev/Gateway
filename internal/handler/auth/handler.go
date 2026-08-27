@@ -20,26 +20,26 @@ func NewHandler(serv Service, conf config.Config) *handler {
 	}
 }
 
-// SendLink godoc
+// CredentialsRegisterLinkSend godoc
 //
 //	@Summary		Sends registration link to email
 //	@Description	Sends registration link with token in query to provided email address
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Router			/auth/sendLink [post]
-//	@Param			request	body		SendLinkRequest	true	"Send link request"
+//	@Router			/auth/creds/reg/link/send [post]
+//	@Param			request	body		CredentialsRegisterLinkSendRequest	true	"Send link request"
 //	@Success		200		{object}	httputil.emptyResponce
 //	@Failure		400		{object}	httputil.errorResponce
 //	@Failure		500		{object}	httputil.errorResponce
-func (h *handler) SendLink() gin.HandlerFunc {
+func (h *handler) CredentialsRegisterLinkSend() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var reqBody SendLinkRequest
+		var reqBody CredentialsRegisterLinkSendRequest
 		if err := ctx.ShouldBindJSON(&reqBody); err != nil {
 			httputil.Error(ctx, http.StatusBadRequest, err)
 		}
 
-		if err := h.serv.register(ctx, reqBody.Email); err != nil {
+		if err := h.serv.credentialsRegisterLinkSend(ctx, reqBody); err != nil {
 			httputil.Error(ctx, http.StatusInternalServerError, err)
 		}
 
@@ -47,26 +47,26 @@ func (h *handler) SendLink() gin.HandlerFunc {
 	}
 }
 
-// Register godoc
+// CredentialsRegisterLinkConfirm godoc
 //
 //	@Summary		Verify email and register user
 //	@Description	Verifies token from link and register user
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Router			/auth/register [post]
-//	@Param			request	body		RegisterRequest	true	"Register request"
+//	@Router			/auth/creds/reg/link/confirm [post]
+//	@Param			request	body		CredentialsRegisterLinkConfirmRequest	true	"CredentialsRegisterLinkConfirm request"
 //	@Success		200		{object}	httputil.emptyResponce
 //	@Failure		400		{object}	httputil.errorResponce
 //	@Failure		500		{object}	httputil.errorResponce
-func (h *handler) Register() gin.HandlerFunc {
+func (h *handler) CredentialsRegisterLinkConfirm() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var reqBody RegisterRequest
+		var reqBody CredentialsRegisterLinkConfirmRequest
 		if err := ctx.ShouldBindJSON(&reqBody); err != nil {
 			httputil.Error(ctx, http.StatusBadRequest, err)
 		}
 
-		if err := h.serv.verify(ctx, reqBody.Token, reqBody.Username, reqBody.Password); err != nil {
+		if err := h.serv.credentialsRegisterLinkConfirm(ctx, reqBody); err != nil {
 			httputil.Error(ctx, http.StatusInternalServerError, err)
 		}
 
@@ -74,26 +74,26 @@ func (h *handler) Register() gin.HandlerFunc {
 	}
 }
 
-// Login godoc
+// CredentialsLogin godoc
 //
-//	@Summary		Login into by email and password
+//	@Summary		CredentialsLogin into by email and password
 //	@Description	Returns access token in body and sets refresh token to cookie
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Router			/auth/login [post]
-//	@Param			request	body		LoginRequest	true	"Login request"
+//	@Router			/auth/creds/login [post]
+//	@Param			request	body		CredentialsLoginRequest	true	"CredentialsLogin request"
 //	@Success		200		{object}	LoginResponce
 //	@Failure		400		{object}	httputil.errorResponce
 //	@Failure		500		{object}	httputil.errorResponce
-func (h *handler) Login() gin.HandlerFunc {
+func (h *handler) CredentialsLogin() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var reqBody LoginRequest
+		var reqBody CredentialsLoginRequest
 		if err := ctx.ShouldBindJSON(&reqBody); err != nil {
 			httputil.Error(ctx, http.StatusBadRequest, err)
 		}
 
-		accToken, refToken, err := h.serv.login(ctx, reqBody.Username, reqBody.Password)
+		resp, refToken, err := h.serv.credentialsLogin(ctx, reqBody)
 		if err != nil {
 			httputil.Error(ctx, http.StatusInternalServerError, err)
 		}
@@ -108,9 +108,7 @@ func (h *handler) Login() gin.HandlerFunc {
 			h.conf.Token.Cookie.HttpOnly,
 		)
 
-		httputil.JSON(ctx, http.StatusOK, LoginResponce{
-			AccessToken: accToken,
-		})
+		httputil.JSON(ctx, http.StatusOK, resp)
 	}
 }
 
@@ -126,10 +124,6 @@ func (h *handler) Login() gin.HandlerFunc {
 //	@Failure		500	{object}	httputil.errorResponce
 func (h *handler) Logout() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if err := h.serv.logout(ctx); err != nil {
-			httputil.Error(ctx, http.StatusInternalServerError, err)
-		}
-
 		ctx.SetCookie(
 			h.conf.Token.Cookie.Name,
 			"",
@@ -144,31 +138,29 @@ func (h *handler) Logout() gin.HandlerFunc {
 	}
 }
 
-// Refresh godoc
+// TokenRefresh godoc
 //
-//	@Summary		Refresh access token
+//	@Summary		TokenRefresh access token
 //	@Description	Refreshs access token using refresh token
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Router			/auth/refresh [get]
-//	@Success		200	{object}	RefreshResponce
+//	@Router			/auth/token/refresh [get]
+//	@Success		200	{object}	TokenRefreshResponce
 //	@Failure		400	{object}	httputil.errorResponce
 //	@Failure		500	{object}	httputil.errorResponce
-func (h *handler) Refresh() gin.HandlerFunc {
+func (h *handler) TokenRefresh() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		refToken, err := ctx.Cookie("refresh_token")
 		if err != nil {
 			httputil.Error(ctx, http.StatusBadRequest, err)
 		}
 
-		accToken, err := h.serv.refresh(ctx, refToken)
+		resp, err := h.serv.tokenRefresh(ctx, refToken)
 		if err != nil {
 			httputil.Error(ctx, http.StatusInternalServerError, err)
 		}
 
-		httputil.JSON(ctx, http.StatusOK, RefreshResponce{
-			AccessToken: accToken,
-		})
+		httputil.JSON(ctx, http.StatusOK, resp)
 	}
 }

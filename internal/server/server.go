@@ -30,15 +30,16 @@ func NewServer(conf config.Config) Server {
 		api := r.Group("/api/v1")
 
 		{
+			authRG := api.Group("/auth")
+
 			s := auth.NewService()
 			h := auth.NewHandler(s, conf)
 
-			rg := api.Group("/auth")
-			rg.POST("/sendLink", h.SendLink())
-			rg.POST("/register", h.Register())
-			rg.POST("/login", h.Login())
-			rg.GET("/refresh", h.Refresh())
-			rg.GET("/logout", h.Logout())
+			authRG.POST("/creds/reg/link/send", h.CredentialsRegisterLinkSend())
+			authRG.POST("/creds/reg/link/confirm", h.CredentialsRegisterLinkConfirm())
+			authRG.POST("/creds/login", h.CredentialsLogin())
+			authRG.GET("/token/refresh", h.TokenRefresh())
+			authRG.GET("/logout", h.Logout())
 		}
 
 		// api.Use(middleware.Auth())

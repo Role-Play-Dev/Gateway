@@ -5,11 +5,10 @@ import (
 )
 
 type Service interface {
-	register(ctx context.Context, email string) error
-	verify(ctx context.Context, token string, username string, password string) error
-	login(ctx context.Context, username string, password string) (accessToken string, refreshToken string, err error)
-	refresh(ctx context.Context, refreshToken string) (accessToken string, err error)
-	logout(ctx context.Context) error
+	credentialsRegisterLinkSend(ctx context.Context, req CredentialsRegisterLinkSendRequest) error
+	credentialsRegisterLinkConfirm(ctx context.Context, req CredentialsRegisterLinkConfirmRequest) error
+	credentialsLogin(ctx context.Context, req CredentialsLoginRequest) (res LoginResponce, refreshToken string, err error)
+	tokenRefresh(ctx context.Context, refreshToken string) (res TokenRefreshResponce, err error)
 }
 
 type service struct {
@@ -19,22 +18,18 @@ func NewService() Service {
 	return &service{}
 }
 
-func (s *service) register(ctx context.Context, email string) error {
+func (s *service) credentialsRegisterLinkSend(ctx context.Context, req CredentialsRegisterLinkSendRequest) error {
 	return nil
 }
 
-func (s *service) verify(ctx context.Context, token string, username string, password string) error {
+func (s *service) credentialsRegisterLinkConfirm(ctx context.Context, req CredentialsRegisterLinkConfirmRequest) error {
 	return nil
 }
 
-func (s *service) login(ctx context.Context, username string, password string) (accessToken string, refreshToken string, err error) {
-	return "", "", nil
+func (s *service) credentialsLogin(ctx context.Context, req CredentialsLoginRequest) (res LoginResponce, refreshToken string, err error) {
+	return LoginResponce{}, "", nil
 }
 
-func (s *service) refresh(ctx context.Context, refreshToken string) (accessToken string, err error) {
-	return "", nil
-}
-
-func (s *service) logout(ctx context.Context) error {
-	return nil
+func (s *service) tokenRefresh(ctx context.Context, refreshToken string) (res TokenRefreshResponce, err error) {
+	return TokenRefreshResponce{}, nil
 }
