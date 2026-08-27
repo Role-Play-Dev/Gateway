@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Check for handler changes
+    - name: Check for changes
       uses: dorny/paths-filter@v4
       id: changes
       with:
@@ -25,11 +25,13 @@ jobs:
             - 'cmd/main.go'
             - 'internal/handler/**/handler.go'
 
-    - name: Generate swagger docs
+    - name: Generate
       if: steps.changes.outputs.src == 'true'
-      run: docker run --rm -v $PWD:/code ghcr.io/swaggo/swag:v1.16.6 sh -c "swag fmt ; swag init -d ./cmd/,./ -o ./docs"
+      run: |
+        docker run --rm -v $PWD:/code ghcr.io/swaggo/swag:v1.16.6 fmt  
+        docker run --rm -v $PWD:/code ghcr.io/swaggo/swag:v1.16.6 init -d ./cmd/,./ -o ./docs"
 
-    - name: Commit generated docs
+    - name: Commit generated
       if: steps.changes.outputs.src == 'true'
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
