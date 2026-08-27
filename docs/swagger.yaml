@@ -20,16 +20,12 @@ definitions:
       passwordRepeat:
         example: Test_1234
         type: string
-      token:
-        example: a17a89b6-eff8-4b05-9be7-407d62b46c4a
-        type: string
       username:
         example: test
         type: string
     required:
     - password
     - passwordRepeat
-    - token
     - username
     type: object
   auth.CredentialsRegisterLinkSendRequest:
@@ -80,7 +76,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Returns access token in body and sets refresh token to cookie
+      description: Accepts email and password, returns access token in body and sets
+        refresh token to cookie
       parameters:
       - description: CredentialsLogin request
         in: body
@@ -103,15 +100,21 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.errorResponce'
-      summary: CredentialsLogin into by email and password
+      summary: Login by user credentials
       tags:
       - auth
   /auth/creds/reg/link/confirm:
     post:
       consumes:
       - application/json
-      description: Verifies token from link and register user
+      description: Accepts token in query and user credential in body, verifies token
+        and creates account
       parameters:
+      - description: Auth token
+        in: query
+        name: auth_token
+        required: true
+        type: string
       - description: CredentialsRegisterLinkConfirm request
         in: body
         name: request
@@ -133,14 +136,15 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.errorResponce'
-      summary: Verify email and register user
+      summary: Confirm email and fill credentials
       tags:
       - auth
   /auth/creds/reg/link/send:
     post:
       consumes:
       - application/json
-      description: Sends registration link with token in query to provided email address
+      description: Saves registration session and sends registration link to client
+        with session ID in token in query to provided email address
       parameters:
       - description: Send link request
         in: body
@@ -163,7 +167,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.errorResponce'
-      summary: Sends registration link to email
+      summary: Send registration link to email
       tags:
       - auth
   /auth/logout:
@@ -189,7 +193,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Refreshs access token using refresh token
+      description: Validates refresh token then generates and sends new access token
       produces:
       - application/json
       responses:
@@ -205,7 +209,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.errorResponce'
-      summary: TokenRefresh access token
+      summary: Refresh access token
       tags:
       - auth
 swagger: "2.0"

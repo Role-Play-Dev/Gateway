@@ -18,7 +18,7 @@ const docTemplate = `{
     "paths": {
         "/auth/creds/login": {
             "post": {
-                "description": "Returns access token in body and sets refresh token to cookie",
+                "description": "Accepts email and password, returns access token in body and sets refresh token to cookie",
                 "consumes": [
                     "application/json"
                 ],
@@ -28,7 +28,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "CredentialsLogin into by email and password",
+                "summary": "Login by user credentials",
                 "parameters": [
                     {
                         "description": "CredentialsLogin request",
@@ -64,7 +64,7 @@ const docTemplate = `{
         },
         "/auth/creds/reg/link/confirm": {
             "post": {
-                "description": "Verifies token from link and register user",
+                "description": "Accepts token in query and user credential in body, verifies token and creates account",
                 "consumes": [
                     "application/json"
                 ],
@@ -74,8 +74,15 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Verify email and register user",
+                "summary": "Confirm email and fill credentials",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Auth token",
+                        "name": "auth_token",
+                        "in": "query",
+                        "required": true
+                    },
                     {
                         "description": "CredentialsRegisterLinkConfirm request",
                         "name": "request",
@@ -110,7 +117,7 @@ const docTemplate = `{
         },
         "/auth/creds/reg/link/send": {
             "post": {
-                "description": "Sends registration link with token in query to provided email address",
+                "description": "Saves registration session and sends registration link to client with session ID in token in query to provided email address",
                 "consumes": [
                     "application/json"
                 ],
@@ -120,7 +127,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Sends registration link to email",
+                "summary": "Send registration link to email",
                 "parameters": [
                     {
                         "description": "Send link request",
@@ -185,7 +192,7 @@ const docTemplate = `{
         },
         "/auth/token/refresh": {
             "get": {
-                "description": "Refreshs access token using refresh token",
+                "description": "Validates refresh token then generates and sends new access token",
                 "consumes": [
                     "application/json"
                 ],
@@ -195,7 +202,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "TokenRefresh access token",
+                "summary": "Refresh access token",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -242,7 +249,6 @@ const docTemplate = `{
             "required": [
                 "password",
                 "passwordRepeat",
-                "token",
                 "username"
             ],
             "properties": {
@@ -253,10 +259,6 @@ const docTemplate = `{
                 "passwordRepeat": {
                     "type": "string",
                     "example": "Test_1234"
-                },
-                "token": {
-                    "type": "string",
-                    "example": "a17a89b6-eff8-4b05-9be7-407d62b46c4a"
                 },
                 "username": {
                     "type": "string",
