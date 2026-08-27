@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	_ "role-play-dev/backend/gateway/docs"
+	_ "role-play-dev/backend/gateway/gen/docs"
 	"role-play-dev/backend/gateway/internal/config"
 	"role-play-dev/backend/gateway/internal/handler/auth"
 

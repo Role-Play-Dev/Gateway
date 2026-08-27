@@ -24,12 +24,12 @@ jobs:
           src:
             - 'cmd/main.go'
             - 'internal/handler/**/handler.go'
-
+    
     - name: Generate
       if: steps.changes.outputs.src == 'true'
       run: |
         docker run --rm -v $PWD:/code ghcr.io/swaggo/swag:v1.16.6 fmt  
-        docker run --rm -v $PWD:/code ghcr.io/swaggo/swag:v1.16.6 init -d ./cmd/,./ -o ./docs
+        docker run --rm -v $PWD:/code ghcr.io/swaggo/swag:v1.16.6 init -d ./cmd/,./ -o ./gen/docs
 
     - name: Commit generated
       if: steps.changes.outputs.src == 'true'
