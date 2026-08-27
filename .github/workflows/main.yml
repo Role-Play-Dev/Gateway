@@ -26,14 +26,13 @@ jobs:
 
     - name: Generate swagger docs
       if: steps.changes.outputs.src == 'true'
-      run: docker run --rm -v $PWD:/code ghcr.io/swaggo/swag:latest init -d ./cmd/,./ -o ./docs
+      run: docker run --rm -v $PWD:/code ghcr.io/swaggo/swag:v1.16.6 sh -c "swag fmt ; swag init -d ./cmd/,./ -o ./docs"
 
     - name: Commit generated docs
       if: steps.changes.outputs.src == 'true'
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
         commit_message: "chore: update swagger docs [skip ci]"
-        file_pattern: "docs/*"
         commit_user_name: "github-actions[bot]"
         commit_user_email: "github-actions[bot]@users.noreply.github.com"
 
