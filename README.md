@@ -5,8 +5,14 @@
 ### 1. **go-task/task** - build tool inspired by Make *https://github.com/go-task/task*
 ### Commands
 - **Install**
+    It already have a command in `go generate` but you can install it manually by
     ```cmd
     go install github.com/go-task/task/v3/cmd/task@latest
+    ```
+
+- **Init default Taskfile.yml**
+    ```bash
+    task --init
     ```
 
 - **Run task**
@@ -15,7 +21,8 @@
     ```
 
 ### Supported tasks
-- `init` - install deps locally
+- `init` - load dependencies
+- `init` - install external tools
 - `run` - runs code
 - `build` - builds project
 - `swag-fmt` - `swag fmt`

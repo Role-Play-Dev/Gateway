@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+vars:
+  SWAG_REPO: github.com/swaggo/swag/cmd/swag
+  SWAG_IMAGE: ghcr.io/swaggo/swag
+  SWAG_VERSION: v1.16.6
+
+tasks:
+  init:
+    desc: Load dependencies
+    cmds:
+      - go mod tidy
+      - go get ./...
+
+  install:
+    desc: Install external tools
+    cmds:
+      - go install {{.SWAG_REPO}}@{{.SWAG_VERSION}}
+
+  run: 
+    desc: Run GO project
+    cmds: 
+      - go run ./...
+
+  build: 
+    desc: Build GO binary
+    cmds: 
+      - go build -o ./bin/GatewayService.exe ./cmd/main.go 
+
+  swag-fmt:
+    desc: Format swagger comments by calling 'swag fmt'
+    cmds:
+      - swag fmt
+
+  swag-init:
+    desc: Generate swagger docs by calling 'swag init ...'
+    cmds: 
+      - swag init -d ./cmd/,./ -o ./gen/docs
+
+  swag-fmt-d:
+    desc: Format swagger comments using docker swaggo/swag image
+    cmds:
+      - docker run --rm -v $PWD:/code {{.SWAG_IMAGE}}:{{.SWAG_VERSION}} fmt
+
+  swag-init-d:
+    desc: Generate swagger docs using docker swaggo/swag image
+    cmds:
+      - docker run --rm -v $PWD:/code {{.SWAG_IMAGE}}:{{.SWAG_VERSION}} init -d ./cmd/,./ -o ./gen/docs
+
