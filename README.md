@@ -5,6 +5,7 @@
 ### 1. **go-task/task** - build tool inspired by Make *https://github.com/go-task/task*
 ### Commands
 - **Install**
+    
     It already have a command in `go generate` but you can install it manually by
     ```cmd
     go install github.com/go-task/task/v3/cmd/task@latest
