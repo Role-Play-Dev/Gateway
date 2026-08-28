@@ -23,7 +23,7 @@
 
 ### Supported tasks
 - `init` - load dependencies
-- `init` - install external tools
+- `install` - install external tools
 - `run` - runs code
 - `build` - builds project
 - `swag-fmt` - `swag fmt`
