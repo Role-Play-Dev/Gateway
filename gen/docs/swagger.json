@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "description": "Backend Gateway service API of a tabletop RPG helper",
-        "title": "Role-Play-Dev Gateway service API documentation (docs gen test)",
+        "title": "Role-Play-Dev Gateway service API documentation",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {},
         "version": "1.0"
