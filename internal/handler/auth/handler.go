@@ -161,7 +161,7 @@ func (h *handler) Logout() gin.HandlerFunc {
 //	@Failure		500	{object}	httputil.errorResponce
 func (h *handler) TokenRefresh() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		refToken, err := ctx.Cookie("refresh_token")
+		refToken, err := ctx.Cookie(h.conf.Token.Cookie.Name)
 		if err != nil {
 			httputil.Error(ctx, http.StatusBadRequest, err)
 		}

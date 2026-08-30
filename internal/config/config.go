@@ -8,6 +8,18 @@ import (
 	"github.com/joho/godotenv"
 )
 
+const (
+	envRelease             = "RELEASE"
+	envServerAddress       = "SERVER_ADDRESS"
+	envClientAddress       = "CLIENT_ADDRESS"
+	envTokenReadSecret     = "TOKEN_READ_SECRET"
+	envTokenCookieName     = "TOKEN_COOKIE_NAME"
+	envTokenCookieMaxAge   = "TOKEN_COOKIE_MAX_AGE"
+	envTokenCookiePath     = "TOKEN_COOKIE_PATH"
+	envTokenCookieSecure   = "TOKEN_COOKIE_SECURE"
+	envTokenCookieHttpOnly = "TOKEN_COOKIE_HTTP_ONLY"
+)
+
 type Config struct {
 	Release       bool
 	ServerAddress string
@@ -24,12 +36,12 @@ type cookieConfig struct {
 }
 
 type tokenConfig struct {
-	Secret string
-	Cookie cookieConfig
+	ReadSecret string
+	Cookie     cookieConfig
 }
 
 func NewConfig() Config {
-	release := getBoolean("RELEASE", false)
+	release := getBoolean(envRelease, false)
 
 	if !release {
 		if err := godotenv.Load(); err != nil {
@@ -39,15 +51,16 @@ func NewConfig() Config {
 
 	return Config{
 		Release:       release,
-		ServerAddress: getString("SERVER_ADDR", ":8080"),
+		ServerAddress: getString(envServerAddress, ":8080"),
+		ClientAddress: getString(envClientAddress, "localhost:80"),
 		Token: tokenConfig{
-			Secret: getString("TOKEN_SECRET", "test_secret"),
+			ReadSecret: getString(envTokenReadSecret, "test_secret"),
 			Cookie: cookieConfig{
-				Name:     getString("TOKEN_COOKIE_NAME", "refresh_token"),
-				MaxAge:   int(getInteger("TOKEN_COOKIE_MAX_AGE", 10000)),
-				Path:     getString("TOKEN_COOKIE_PATH", "refresh_token"),
-				Secure:   getBoolean("TOKEN_COOKIE_SECURE", false),
-				HttpOnly: getBoolean("TOKEN_COOKIE_HTTP_ONLY", true),
+				Name:     getString(envTokenCookieName, "refresh_token"),
+				MaxAge:   int(getInteger(envTokenCookieMaxAge, 10000)),
+				Path:     getString(envTokenCookiePath, "refresh_token"),
+				Secure:   getBoolean(envTokenCookieSecure, false),
+				HttpOnly: getBoolean(envTokenCookieHttpOnly, true),
 			},
 		},
 	}
