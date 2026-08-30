@@ -40,7 +40,7 @@ func (h *handler) CredentialsRegisterLinkSend() gin.HandlerFunc {
 			httputil.Error(ctx, http.StatusBadRequest, err)
 		}
 
-		if err := h.serv.credentialsRegisterLinkSend(ctx, req); err != nil {
+		if err := h.serv.CredentialsRegisterLinkSend(ctx, req); err != nil {
 			httputil.Error(ctx, http.StatusInternalServerError, err)
 		}
 
@@ -75,7 +75,7 @@ func (h *handler) CredentialsRegisterLinkConfirm() gin.HandlerFunc {
 			httputil.Error(ctx, http.StatusBadRequest, err)
 		}
 
-		if err := h.serv.credentialsRegisterLinkConfirm(ctx, token, req); err != nil {
+		if err := h.serv.CredentialsRegisterLinkConfirm(ctx, token, req); err != nil {
 			httputil.Error(ctx, http.StatusInternalServerError, err)
 		}
 
@@ -102,7 +102,7 @@ func (h *handler) CredentialsLogin() gin.HandlerFunc {
 			httputil.Error(ctx, http.StatusBadRequest, err)
 		}
 
-		resp, refToken, err := h.serv.credentialsLogin(ctx, req)
+		resp, refToken, err := h.serv.CredentialsLogin(ctx, req)
 		if err != nil {
 			httputil.Error(ctx, http.StatusInternalServerError, err)
 		}
@@ -165,7 +165,7 @@ func (h *handler) TokenRefresh() gin.HandlerFunc {
 			httputil.Error(ctx, http.StatusBadRequest, err)
 		}
 
-		resp, err := h.serv.tokenRefresh(ctx, refToken)
+		resp, err := h.serv.TokenRefresh(ctx, refToken)
 		if err != nil {
 			httputil.Error(ctx, http.StatusInternalServerError, err)
 		}
