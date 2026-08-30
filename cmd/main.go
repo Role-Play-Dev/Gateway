@@ -15,7 +15,7 @@ import (
 
 //go:generate go install github.com/go-task/task/v3/cmd/task@latest
 
-//	@title			Role-Play-Dev Gateway service API documentation (docs gen test)
+//	@title			Role-Play-Dev Gateway service API documentation
 //	@version		1.0
 //	@description	Backend Gateway service API of a tabletop RPG helper
 //	@termsOfService	http://swagger.io/terms/
