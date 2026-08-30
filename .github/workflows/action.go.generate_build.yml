@@ -1,4 +1,4 @@
-name: Build and Test
+name: Generate and build
 
 on:
   push:
@@ -31,13 +31,23 @@ jobs:
         docker run --rm -v $PWD:/code ghcr.io/swaggo/swag:v1.16.6 fmt  
         docker run --rm -v $PWD:/code ghcr.io/swaggo/swag:v1.16.6 init -d ./cmd/,./ -o ./gen/docs
 
-    - name: Commit generated
+    - name: Commit changes
       if: steps.changes.outputs.src == 'true'
-      uses: stefanzweifel/git-auto-commit-action@v5
-      with:
-        commit_message: "chore: update swagger docs [skip ci]"
-        commit_user_name: "github-actions[bot]"
-        commit_user_email: "github-actions[bot]@users.noreply.github.com"
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+        git add -f .
+        git commit -m "chore: update swagger docs [skip ci]"
+        git push
+
+    # - name: Commit generated
+    #   if: steps.changes.outputs.src == 'true'
+    #   uses: stefanzweifel/git-auto-commit-action@v5
+    #   with:
+    #     commit_message: "chore: update swagger docs [skip ci]"
+    #     commit_user_name: "github-actions[bot]"
+    #     commit_user_email: "github-actions[bot]@users.noreply.github.com"
 
   build:
     runs-on: ubuntu-latest
