@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	_ "role-play-dev/backend/gateway/gen/docs"
-	"role-play-dev/backend/gateway/internal/config"
-	"role-play-dev/backend/gateway/internal/handler/auth"
+	_ "github.com/role-play-dev/gateway-service/gen/docs"
+	"github.com/role-play-dev/gateway-service/internal/config"
+	"github.com/role-play-dev/gateway-service/internal/handler/auth"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"

@@ -8,9 +8,9 @@ import (
 	"syscall"
 	"time"
 
-	_ "role-play-dev/backend/gateway/gen/docs"
-	"role-play-dev/backend/gateway/internal/config"
-	"role-play-dev/backend/gateway/internal/server"
+	_ "github.com/role-play-dev/gateway-service/gen/docs"
+	"github.com/role-play-dev/gateway-service/internal/config"
+	"github.com/role-play-dev/gateway-service/internal/server"
 )
 
 //go:generate go install github.com/go-task/task/v3/cmd/task@latest

@@ -3,8 +3,9 @@ package auth
 import (
 	"fmt"
 	"net/http"
-	"role-play-dev/backend/gateway/internal/config"
-	"role-play-dev/backend/gateway/internal/util/httputil"
+
+	"github.com/role-play-dev/gateway-service/internal/config"
+	"github.com/role-play-dev/gateway-service/internal/util/httputil"
 
 	"github.com/gin-gonic/gin"
 )
