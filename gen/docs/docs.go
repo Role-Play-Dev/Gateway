@@ -329,7 +329,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "Role-Play-Dev Gateway service API documentation",
+	Title:            "Role-Play-Dev Gateway service API documentation (docs gen test)",
 	Description:      "Backend Gateway service API of a tabletop RPG helper",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
